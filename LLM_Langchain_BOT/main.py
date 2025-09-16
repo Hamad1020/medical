@@ -182,12 +182,13 @@ Your intelligent medical assistant powered by AI and real-time web access
 # Features Section
 st.markdown("""
 <div class="feature-card">
-    <h3>🏥 Key Features</h3>
+    <h3>🏥 Advanced Medical AI System</h3>
     <ul>
-        <li>Real-time medical queries with web access</li>
-        <li>Latest medical news and treatment information</li>
-        <li>AI-powered responses using GPT-4o</li>
-        <li>24/7 availability for health-related questions</li>
+        <li>🔬 <strong>Intelligent Medical Analysis</strong> - Advanced AI-powered medical assistance</li>
+        <li>🌐 <strong>Real-time Information Access</strong> - Latest medical research and treatments</li>
+        <li>💬 <strong>Natural Conversation</strong> - Human-like medical consultations</li>
+        <li>⚡ <strong>24/7 Availability</strong> - Always ready to help with health questions</li>
+        <li>🎯 <strong>Personalized Responses</strong> - Tailored medical guidance for your needs</li>
     </ul>
 </div>
 """, unsafe_allow_html=True)
@@ -236,10 +237,20 @@ with st.expander("ℹ️ About Hamad Medical Bot"):
 **Important**: This AI provides preliminary guidance only. Always consult healthcare professionals for medical advice.
 """)
 
+# Developer Credit Section
+st.markdown("---")
+st.markdown("""
+<div class="feature-card" style="text-align: center; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border-left: none;">
+    <h3 style="color: white; margin-bottom: 10px;">👨‍💻 Developed by Hamad Aldohaishi</h3>
+    <p style="color: #f0f0f0; margin: 0;">Advanced AI Medical Assistant System</p>
+    <p style="color: #e0e0e0; font-size: 0.9em; margin-top: 5px;">Combining cutting-edge artificial intelligence with medical expertise</p>
+</div>
+""", unsafe_allow_html=True)
+
 # Footer
 st.markdown("""
 <div class="footer">
-    <p>Hamad Medical Bot - Your AI Medical Assistant</p>
-    <p>Version 1.0.0 | © 2024 Hamad Medical Bot. All rights reserved.</p>
+    <p>Hamad Medical Bot - Advanced AI Medical Assistant</p>
+    <p>Version 1.0.0 | Developed by Hamad Aldohaishi | © 2024 All rights reserved.</p>
 </div>
 """, unsafe_allow_html=True)
