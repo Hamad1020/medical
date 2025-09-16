@@ -4,6 +4,33 @@ from PIL import Image
 # Custom CSS with medical theme
 custom_css = """
 <style>
+/* Hide GitHub link and Streamlit branding */
+.viewerBadge_container__1QSob {
+    display: none !important;
+}
+
+.viewerBadge_link__1S137 {
+    display: none !important;
+}
+
+/* Hide any GitHub-related elements */
+a[href*="github"] {
+    display: none !important;
+}
+
+/* Hide Streamlit menu and footer */
+#MainMenu {
+    display: none !important;
+}
+
+footer {
+    display: none !important;
+}
+
+.stDeployButton {
+    display: none !important;
+}
+
 /* Main theme colors */
 :root {
     --primary-blue: #4a90e2; /* Softer blue for a professional look */

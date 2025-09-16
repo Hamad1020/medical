@@ -2,6 +2,38 @@ import utils
 import streamlit as st
 from streaming import StreamHandler
 
+# Hide GitHub and Streamlit branding
+st.markdown("""
+<style>
+/* Hide GitHub link and Streamlit branding */
+.viewerBadge_container__1QSob {
+    display: none !important;
+}
+
+.viewerBadge_link__1S137 {
+    display: none !important;
+}
+
+/* Hide any GitHub-related elements */
+a[href*="github"] {
+    display: none !important;
+}
+
+/* Hide Streamlit menu and footer */
+#MainMenu {
+    display: none !important;
+}
+
+footer {
+    display: none !important;
+}
+
+.stDeployButton {
+    display: none !important;
+}
+</style>
+""", unsafe_allow_html=True)
+
 st.header('Hamad Medical Bot - AI Medical Assistant')
 st.write('Your intelligent medical assistant powered by AI')
 st.caption("Ask medical questions and get AI-powered responses")
