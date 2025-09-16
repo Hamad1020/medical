@@ -14,6 +14,7 @@ conversation_history = {}
 
 def handler(event, context):
     """Netlify function to handle chat requests"""
+    print(f"DEBUG: Function called with method: {event.get('httpMethod', 'UNKNOWN')}")
 
     # Set CORS headers
     headers = {
@@ -53,11 +54,13 @@ def handler(event, context):
 
         # Check for OpenAI API key
         api_key = os.environ.get('OPENAI_API_KEY', '')
+        print(f"DEBUG: API key present: {bool(api_key)}")
         if not api_key:
+            print("DEBUG: No OpenAI API key found")
             return {
                 'statusCode': 500,
                 'headers': headers,
-                'body': json.dumps({'error': 'OpenAI API key not configured'})
+                'body': json.dumps({'error': 'OpenAI API key not configured. Please check your Netlify environment variables.'})
             }
 
         # Initialize OpenAI client
@@ -86,14 +89,23 @@ def handler(event, context):
         })
 
         # Get response from GPT-4o
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.7
-        )
-
-        ai_response = response.choices[0].message.content
+        print(f"DEBUG: Making OpenAI API call with {len(messages)} messages")
+        try:
+            response = client.chat.completions.create(
+                model="gpt-4o",
+                messages=messages,
+                max_tokens=1000,
+                temperature=0.7
+            )
+            ai_response = response.choices[0].message.content
+            print(f"DEBUG: Got response from OpenAI: {len(ai_response)} characters")
+        except Exception as api_error:
+            print(f"DEBUG: OpenAI API error: {str(api_error)}")
+            return {
+                'statusCode': 500,
+                'headers': headers,
+                'body': json.dumps({'error': f'OpenAI API error: {str(api_error)}'})
+            }
 
         # Store conversation in history
         conversation_history[session_id].append({

@@ -216,10 +216,24 @@
                     })
                 });
 
+                if (!response.ok) {
+                    // Handle HTTP errors
+                    const errorText = await response.text();
+                    addMessage(`Server error (${response.status}): ${errorText}`);
+                    return;
+                }
+
                 const data = await response.json();
 
                 if (data.error) {
-                    addMessage(`Sorry, I encountered an error: ${data.error}`);
+                    // Handle application errors
+                    if (data.error.includes('API key')) {
+                        addMessage('Configuration error: OpenAI API key not set up properly. Please contact the administrator.');
+                    } else if (data.error.includes('OpenAI API')) {
+                        addMessage('AI service temporarily unavailable. Please try again in a moment.');
+                    } else {
+                        addMessage(`Error: ${data.error}`);
+                    }
                 } else {
                     addMessage(data.response);
                     sessionId = data.session_id;
