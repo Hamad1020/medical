@@ -1,16 +1,16 @@
 import json
 import os
 import sys
-from pathlib import Path
 
-# Add the LLM_Langchain_BOT directory to Python path
-sys.path.append(str(Path(__file__).parent.parent.parent / "LLM_Langchain_BOT"))
+# Set up environment
+os.environ["OPENAI_API_KEY"] = os.environ.get("OPENAI_API_KEY", "")
 
-import utils
-from langchain_openai import ChatOpenAI
-from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_core.runnables import RunnableWithMessageHistory
-from langchain_community.chat_message_histories import ChatMessageHistory
+# Import required modules
+import openai
+from openai import OpenAI
+
+# Global conversation history storage
+conversation_history = {}
 
 def handler(event, context):
     """Netlify function to handle chat requests"""
@@ -40,8 +40,8 @@ def handler(event, context):
 
     try:
         # Parse request body
-        body = json.loads(event['body'])
-        user_message = body.get('message', '')
+        body = json.loads(event.get('body', '{}'))
+        user_message = body.get('message', '').strip()
         session_id = body.get('session_id', 'default')
 
         if not user_message:
@@ -51,53 +51,78 @@ def handler(event, context):
                 'body': json.dumps({'error': 'No message provided'})
             }
 
-        # Initialize LLM
-        llm = utils.configure_llm()
+        # Check for OpenAI API key
+        api_key = os.environ.get('OPENAI_API_KEY', '')
+        if not api_key:
+            return {
+                'statusCode': 500,
+                'headers': headers,
+                'body': json.dumps({'error': 'OpenAI API key not configured'})
+            }
 
-        # Create prompt template
-        prompt = ChatPromptTemplate.from_messages([
-            ("system", "You are Hamad Medical Bot, a helpful medical assistant. Answer medical questions based on general knowledge. Always remind users that you're not a substitute for professional medical advice."),
-            MessagesPlaceholder(variable_name="history"),
-            ("human", "{input}")
-        ])
+        # Initialize OpenAI client
+        client = OpenAI(api_key=api_key)
 
-        # Create chain
-        chain = prompt | llm
+        # Get conversation history for this session
+        if session_id not in conversation_history:
+            conversation_history[session_id] = []
 
-        # Session management
-        sessions = {}
+        # Prepare messages for OpenAI
+        messages = [
+            {
+                "role": "system",
+                "content": "You are Hamad Medical Bot, a helpful and knowledgeable medical assistant. Provide accurate, helpful medical information based on established medical knowledge. Always be empathetic, clear, and professional. Include relevant disclaimers when appropriate, but don't over-warn users unnecessarily. Focus on being genuinely helpful while maintaining medical accuracy."
+            }
+        ]
 
-        def get_session_history(session_id_param):
-            if session_id_param not in sessions:
-                sessions[session_id_param] = ChatMessageHistory()
-            return sessions[session_id_param]
+        # Add conversation history (limit to last 10 messages to avoid token limits)
+        for msg in conversation_history[session_id][-10:]:
+            messages.append(msg)
 
-        conversation_chain = RunnableWithMessageHistory(
-            runnable=chain,
-            get_session_history=get_session_history,
-            input_messages_key="input",
-            history_messages_key="history"
+        # Add current user message
+        messages.append({
+            "role": "user",
+            "content": user_message
+        })
+
+        # Get response from GPT-4o
+        response = client.chat.completions.create(
+            model="gpt-4o",
+            messages=messages,
+            max_tokens=1000,
+            temperature=0.7
         )
 
-        # Get response
-        result = conversation_chain.invoke(
-            {"input": user_message},
-            config={"configurable": {"session_id": session_id}}
-        )
+        ai_response = response.choices[0].message.content
 
-        response = result.content
+        # Store conversation in history
+        conversation_history[session_id].append({
+            "role": "user",
+            "content": user_message
+        })
+        conversation_history[session_id].append({
+            "role": "assistant",
+            "content": ai_response
+        })
+
+        # Limit history to prevent memory issues
+        if len(conversation_history[session_id]) > 20:  # Keep last 10 exchanges
+            conversation_history[session_id] = conversation_history[session_id][-20:]
 
         return {
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({
-                'response': response,
+                'response': ai_response,
                 'session_id': session_id
             })
         }
 
     except Exception as e:
         print(f"Error: {str(e)}")
+        import traceback
+        traceback.print_exc()
+
         return {
             'statusCode': 500,
             'headers': headers,
