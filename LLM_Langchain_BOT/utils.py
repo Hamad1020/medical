@@ -60,13 +60,19 @@ def choose_custom_openai_key():
 
     model = "gpt-4o"
     try:
-        # Clear proxy environment variables
-        proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
+        # Disable proxy settings to prevent OpenAI client proxy errors
+        proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy', 'ALL_PROXY']
         for var in proxy_env_vars:
-            if var in os.environ:
-                del os.environ[var]
+            os.environ[var] = ''
 
-        client = openai.OpenAI(api_key=openai_api_key, timeout=60.0)
+        # Create a custom httpx client without proxy support
+        import httpx
+        http_client = httpx.Client(
+            proxies=None,  # Explicitly disable proxies
+            timeout=60.0
+        )
+
+        client = openai.OpenAI(api_key=openai_api_key, http_client=http_client)
         available_models = [{"id": i.id, "created":datetime.fromtimestamp(i.created)} for i in client.models.list() if str(i.id).startswith("gpt")]
         available_models = sorted(available_models, key=lambda x: x["created"])
         available_models = [i["id"] for i in available_models]
@@ -89,17 +95,22 @@ def configure_llm():
     # Hardcoded OpenAI API key
     api_key = "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"
 
-    # Clear any proxy environment variables that might cause issues
-    proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
+    # Disable proxy settings to prevent OpenAI client proxy errors
+    proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy', 'ALL_PROXY']
     for var in proxy_env_vars:
-        if var in os.environ:
-            del os.environ[var]
+        os.environ[var] = ''
 
-    # Return OpenAI client directly with explicit parameters
+    # Create a custom httpx client without proxy support
+    import httpx
+    http_client = httpx.Client(
+        proxies=None,  # Explicitly disable proxies
+        timeout=60.0
+    )
+
+    # Return OpenAI client with custom httpx client
     return openai.OpenAI(
         api_key=api_key,
-        base_url=None,  # Use default
-        timeout=60.0
+        http_client=http_client
     )
 
 def print_qa(cls, question, answer):
