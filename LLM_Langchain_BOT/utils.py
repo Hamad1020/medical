@@ -86,10 +86,18 @@ def choose_custom_openai_key():
     return model, openai_api_key
 
 def configure_llm():
-    # Fresh API key for private repo
-    api_key = "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"
+    # Get API key from Streamlit secrets or environment variables
+    try:
+        # Try Streamlit secrets first (for cloud deployment)
+        api_key = st.secrets["OPENAI_API_KEY"]
+    except:
+        # Fallback to environment variable (for local development)
+        api_key = os.getenv("OPENAI_API_KEY")
+        if not api_key:
+            st.error("⚠️ OpenAI API key not found! Please add OPENAI_API_KEY to Streamlit secrets.")
+            st.stop()
     
-    # Set as environment variable
+    # Set as environment variable for OpenAI client
     os.environ["OPENAI_API_KEY"] = api_key.strip()
 
     # Completely remove proxy environment variables
