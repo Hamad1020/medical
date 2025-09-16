@@ -87,12 +87,8 @@ def choose_custom_openai_key():
     return model, openai_api_key
 
 def configure_llm():
-    # Use only GPT-4o as the standard model
-    openai_api_key = os.getenv("OPENAI_API_KEY")
-
-    if not openai_api_key:
-        st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
-        st.stop()
+    # Hardcoded OpenAI API key
+    openai_api_key = "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"
 
     # Set the environment variable for OpenAI client
     os.environ["OPENAI_API_KEY"] = openai_api_key
