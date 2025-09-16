@@ -86,8 +86,11 @@ def choose_custom_openai_key():
     return model, openai_api_key
 
 def configure_llm():
-    # Hardcoded OpenAI API key - UPDATED WITH CORRECT KEY
+    # Set API key as environment variable first
     api_key = "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"
+    
+    # Set as environment variable
+    os.environ["OPENAI_API_KEY"] = api_key.strip()
 
     # Completely remove proxy environment variables
     proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy', 'ALL_PROXY', 'no_proxy', 'NO_PROXY']
@@ -95,8 +98,8 @@ def configure_llm():
         if var in os.environ:
             del os.environ[var]
 
-    # Return OpenAI client with minimal configuration
-    return openai.OpenAI(api_key=api_key)
+    # Return OpenAI client using environment variable
+    return openai.OpenAI()
 
 def print_qa(cls, question, answer):
     log_str = "\nUsecase: {}\nQuestion: {}\nAnswer: {}\n" + "------"*10
