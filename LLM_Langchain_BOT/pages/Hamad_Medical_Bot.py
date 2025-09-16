@@ -46,9 +46,9 @@ def main():
                     "content": user_query
                 })
                 
-                # Try GPT-3.5-turbo first (more reliable access)
+                # Get response from GPT-4o
                 response = client.chat.completions.create(
-                    model="gpt-3.5-turbo",
+                    model="gpt-4o",
                     messages=messages,
                     max_tokens=1000,
                     temperature=0.7,
@@ -84,6 +84,11 @@ def main():
                 error_msg = str(e)
                 print(f"Error: {error_msg}")
                 
+                # Show the actual error for debugging
+                with st.expander("🔍 Debug Info (Click to expand)"):
+                    st.code(f"Full error: {error_msg}")
+                    st.code(f"API Key (last 10 chars): ...{client.api_key[-10:] if hasattr(client, 'api_key') else 'No key found'}")
+                
                 if "rate limit" in error_msg.lower():
                     st.error("⚠️ Rate limit exceeded. Please wait a moment and try again.")
                 elif "timeout" in error_msg.lower():
@@ -92,6 +97,8 @@ def main():
                     st.error("⚠️ Too many requests. Please wait a moment and try again.")
                 elif "invalid_api_key" in error_msg.lower() or "401" in error_msg:
                     st.error("⚠️ API key issue detected. Please check your OpenAI API key.")
+                elif "model" in error_msg.lower() and "does not exist" in error_msg.lower():
+                    st.error("⚠️ Model access issue. GPT-4o might not be available for your API key.")
                 else:
                     st.error("Some error occurred. Please try again.")
                 
