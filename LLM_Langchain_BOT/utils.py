@@ -87,15 +87,22 @@ def choose_custom_openai_key():
 
 def configure_llm():
     # Get API key from Streamlit secrets or environment variables
+    api_key = None
+    
+    # Try Streamlit secrets first (for cloud deployment)
     try:
-        # Try Streamlit secrets first (for cloud deployment)
         api_key = st.secrets["OPENAI_API_KEY"]
     except:
-        # Fallback to environment variable (for local development)
+        pass
+    
+    # Fallback to environment variable (for local development)
+    if not api_key:
         api_key = os.getenv("OPENAI_API_KEY")
-        if not api_key:
-            st.error("⚠️ OpenAI API key not found! Please add OPENAI_API_KEY to Streamlit secrets.")
-            st.stop()
+    
+    # Final check - if still no API key, show error
+    if not api_key:
+        st.error("⚠️ OpenAI API key not found! Please add OPENAI_API_KEY to environment variables or Streamlit secrets.")
+        st.stop()
     
     # Set as environment variable for OpenAI client
     os.environ["OPENAI_API_KEY"] = api_key.strip()
