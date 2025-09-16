@@ -86,8 +86,8 @@ def choose_custom_openai_key():
     return model, openai_api_key
 
 def configure_llm():
-    # Hardcoded OpenAI API key
-    api_key = "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"
+    # Hardcoded OpenAI API key - UPDATED WITH NEW KEY
+    api_key = "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"
 
     # Completely remove proxy environment variables
     proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy', 'ALL_PROXY', 'no_proxy', 'NO_PROXY']
