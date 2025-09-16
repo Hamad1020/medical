@@ -86,8 +86,8 @@ def choose_custom_openai_key():
     return model, openai_api_key
 
 def configure_llm():
-    # Set API key as environment variable first
-    api_key = "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"
+    # Fresh API key for private repo
+    api_key = "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"
     
     # Set as environment variable
     os.environ["OPENAI_API_KEY"] = api_key.strip()
