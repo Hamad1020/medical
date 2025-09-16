@@ -6,7 +6,6 @@ langchain_openai==0.2.8
 langchain_text_splitters==0.3.2
 openai==1.54.4
 SQLAlchemy==2.0.35
-streamlit==1.40.1
 duckduckgo-search==7.2.0
 pypdf==5.1.0
 fastembed==0.4.2
