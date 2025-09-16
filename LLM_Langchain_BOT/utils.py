@@ -94,7 +94,10 @@ def configure_llm():
         st.error("OpenAI API key not found. Please set the OPENAI_API_KEY environment variable.")
         st.stop()
 
-    llm = ChatOpenAI(model="gpt-4o", temperature=0, api_key=openai_api_key)
+    # Set the environment variable for OpenAI client
+    os.environ["OPENAI_API_KEY"] = openai_api_key
+
+    llm = ChatOpenAI(model="gpt-4o", temperature=0)
     return llm
 
 def print_qa(cls, question, answer):

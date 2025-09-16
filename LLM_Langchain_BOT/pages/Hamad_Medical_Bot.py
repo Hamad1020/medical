@@ -8,6 +8,7 @@ from langchain_community.tools import DuckDuckGoSearchRun
 from langchain_community.callbacks import StreamlitCallbackHandler
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain_core.tools import Tool
+from langchain_community.chat_message_histories import ChatMessageHistory
 
 st.header('Hamad Medical Bot - AI Medical Assistant')
 st.write('Your intelligent medical assistant powered by AI and real-time web access')
