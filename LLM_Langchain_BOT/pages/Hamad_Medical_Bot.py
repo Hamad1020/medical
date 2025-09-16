@@ -46,9 +46,9 @@ def main():
                     "content": user_query
                 })
                 
-                # Get response from GPT-4o
+                # Try GPT-3.5-turbo first (more reliable access)
                 response = client.chat.completions.create(
-                    model="gpt-4o",
+                    model="gpt-3.5-turbo",
                     messages=messages,
                     max_tokens=1000,
                     temperature=0.7,
