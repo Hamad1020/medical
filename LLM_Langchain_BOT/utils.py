@@ -60,7 +60,13 @@ def choose_custom_openai_key():
 
     model = "gpt-4o"
     try:
-        client = openai.OpenAI(api_key=openai_api_key)
+        # Clear proxy environment variables
+        proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
+        for var in proxy_env_vars:
+            if var in os.environ:
+                del os.environ[var]
+
+        client = openai.OpenAI(api_key=openai_api_key, timeout=60.0)
         available_models = [{"id": i.id, "created":datetime.fromtimestamp(i.created)} for i in client.models.list() if str(i.id).startswith("gpt")]
         available_models = sorted(available_models, key=lambda x: x["created"])
         available_models = [i["id"] for i in available_models]
@@ -83,8 +89,18 @@ def configure_llm():
     # Hardcoded OpenAI API key
     api_key = "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"
 
-    # Return OpenAI client directly
-    return openai.OpenAI(api_key=api_key)
+    # Clear any proxy environment variables that might cause issues
+    proxy_env_vars = ['HTTP_PROXY', 'HTTPS_PROXY', 'http_proxy', 'https_proxy']
+    for var in proxy_env_vars:
+        if var in os.environ:
+            del os.environ[var]
+
+    # Return OpenAI client directly with explicit parameters
+    return openai.OpenAI(
+        api_key=api_key,
+        base_url=None,  # Use default
+        timeout=60.0
+    )
 
 def print_qa(cls, question, answer):
     log_str = "\nUsecase: {}\nQuestion: {}\nAnswer: {}\n" + "------"*10
