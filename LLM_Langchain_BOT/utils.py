@@ -1,15 +1,8 @@
 import os
-import openai
 import streamlit as st
 from datetime import datetime
 from streamlit.logger import get_logger
-try:
-    from langchain_openai import ChatOpenAI
-except ImportError:
-    # Fallback to older import
-    from langchain.chat_models import ChatOpenAI
-from langchain_community.chat_models import ChatOllama
-from langchain_community.embeddings.fastembed import FastEmbedEmbeddings
+import openai
 
 logger = get_logger('Langchain-Chatbot')
 
@@ -88,13 +81,10 @@ def choose_custom_openai_key():
 
 def configure_llm():
     # Hardcoded OpenAI API key
-    openai_api_key = "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"
+    api_key = "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"
 
-    # Set the environment variable for OpenAI client
-    os.environ["OPENAI_API_KEY"] = openai_api_key
-
-    llm = ChatOpenAI(model="gpt-4o", temperature=0)
-    return llm
+    # Return OpenAI client directly
+    return openai.OpenAI(api_key=api_key)
 
 def print_qa(cls, question, answer):
     log_str = "\nUsecase: {}\nQuestion: {}\nAnswer: {}\n" + "------"*10
