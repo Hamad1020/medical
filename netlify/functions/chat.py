@@ -13,7 +13,7 @@ from openai import OpenAI
 conversation_history = {}
 
 def handler(event, context):
-    """Netlify function to handle chat requests"""
+    """Netlify function to handle chat requests - simplified for testing"""
 
     # Set CORS headers
     headers = {
@@ -24,14 +24,14 @@ def handler(event, context):
     }
 
     # Handle preflight requests
-    if event['httpMethod'] == 'OPTIONS':
+    if event.get('httpMethod') == 'OPTIONS':
         return {
             'statusCode': 200,
             'headers': headers,
             'body': ''
         }
 
-    if event['httpMethod'] != 'POST':
+    if event.get('httpMethod') != 'POST':
         return {
             'statusCode': 405,
             'headers': headers,
@@ -39,8 +39,12 @@ def handler(event, context):
         }
 
     try:
-        # Parse request body
-        body = json.loads(event.get('body', '{}'))
+        # Parse request body safely
+        try:
+            body = json.loads(event.get('body', '{}'))
+        except:
+            body = {}
+
         user_message = body.get('message', '').strip()
         session_id = body.get('session_id', 'default')
 
@@ -51,83 +55,28 @@ def handler(event, context):
                 'body': json.dumps({'error': 'No message provided'})
             }
 
-        # Check for OpenAI API key
-        api_key = os.environ.get('OPENAI_API_KEY', '')
-        if not api_key:
-            return {
-                'statusCode': 500,
-                'headers': headers,
-                'body': json.dumps({'error': 'OpenAI API key not configured. Please check your Netlify environment variables.'})
-            }
-
-        # Initialize OpenAI client
-        client = OpenAI(api_key=api_key)
-
-        # Get conversation history for this session
-        if session_id not in conversation_history:
-            conversation_history[session_id] = []
-
-        # Prepare messages for OpenAI
-        messages = [
-            {
-                "role": "system",
-                "content": "You are Hamad Medical Bot, a helpful and knowledgeable medical assistant. Provide accurate, helpful medical information based on established medical knowledge. Always be empathetic, clear, and professional. Include relevant disclaimers when appropriate, but don't over-warn users unnecessarily. Focus on being genuinely helpful while maintaining medical accuracy."
-            }
-        ]
-
-        # Add conversation history (limit to last 10 messages to avoid token limits)
-        for msg in conversation_history[session_id][-10:]:
-            messages.append(msg)
-
-        # Add current user message
-        messages.append({
-            "role": "user",
-            "content": user_message
-        })
-
-        # Get response from GPT-4o
-        response = client.chat.completions.create(
-            model="gpt-4o",
-            messages=messages,
-            max_tokens=1000,
-            temperature=0.7
-        )
-
-        ai_response = response.choices[0].message.content
-
-        # Store conversation in history
-        conversation_history[session_id].append({
-            "role": "user",
-            "content": user_message
-        })
-        conversation_history[session_id].append({
-            "role": "assistant",
-            "content": ai_response
-        })
-
-        # Limit history to prevent memory issues
-        if len(conversation_history[session_id]) > 20:  # Keep last 10 exchanges
-            conversation_history[session_id] = conversation_history[session_id][-20:]
+        # Simple response for now - test if function works
+        if 'hello' in user_message.lower() or 'hi' in user_message.lower():
+            response = "Hello! I'm Hamad Medical Bot, your AI medical assistant. How can I help you with health-related questions today?"
+        elif 'pain' in user_message.lower():
+            response = "I understand you're experiencing pain. While I can provide general information, please consult a healthcare professional for proper diagnosis and treatment. Can you describe the type and location of your pain?"
+        else:
+            response = f"Thank you for your question about '{user_message}'. I'm here to help with medical questions. For personalized medical advice, please consult a qualified healthcare professional. What specific health concern would you like information about?"
 
         return {
             'statusCode': 200,
             'headers': headers,
             'body': json.dumps({
-                'response': ai_response,
+                'response': response,
                 'session_id': session_id
             })
         }
 
     except Exception as e:
-        print(f"Error: {str(e)}")
-        import traceback
-        traceback.print_exc()
-
         return {
             'statusCode': 500,
             'headers': headers,
             'body': json.dumps({
-                'error': 'Internal server error',
-                'details': str(e)
+                'error': f'Error: {str(e)}'
             })
         }
