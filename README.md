@@ -9,7 +9,27 @@ A streamlined AI-powered medical assistant that provides preliminary medical gui
 - **Conversational AI**: Maintains conversation history for contextual responses
 - **Medical Focus**: Specialized for healthcare-related queries
 
-## Setup
+## Deployment Options
+
+### Option 1: Streamlit Cloud (Recommended)
+
+1. Go to [Streamlit Cloud](https://share.streamlit.io/)
+2. Connect your GitHub repository: `https://github.com/Hamad1020/medical.git`
+3. Set main file path: `LLM_Langchain_BOT/main.py`
+4. Add environment variable: `OPENAI_API_KEY=your_api_key_here`
+5. Deploy
+
+### Option 2: Netlify (Alternative)
+
+1. **Connect Repository**: Link your GitHub repo to Netlify
+2. **Build Settings**:
+   - Build command: (leave empty)
+   - Publish directory: `build` (but this will be overridden)
+3. **Environment Variables**:
+   - `OPENAI_API_KEY`: Your OpenAI API key
+4. **Deploy**
+
+## Local Development
 
 1. Clone the repository:
 ```bash
@@ -54,10 +74,18 @@ OPENAI_API_KEY=your_openai_api_key_here
 
 ## Architecture
 
+### Streamlit Cloud Version
 - **Frontend**: Streamlit web interface
 - **AI Model**: GPT-4o via OpenAI API
 - **Web Search**: DuckDuckGo integration
 - **Memory**: Conversation history management
+
+### Netlify Version
+- **Frontend**: Vanilla HTML/JavaScript
+- **Backend**: Netlify Functions (Python)
+- **AI Model**: GPT-4o via OpenAI API
+- **Web Search**: DuckDuckGo integration
+- **Memory**: Session-based conversation history
 
 ## License
 
