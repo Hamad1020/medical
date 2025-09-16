@@ -31,6 +31,52 @@ footer {
 .stDeployButton {
     display: none !important;
 }
+
+/* Hide top-right toolbar with GitHub and edit buttons */
+.stAppToolbar {
+    display: none !important;
+}
+
+.stToolbar {
+    display: none !important;
+}
+
+/* Hide the entire top toolbar area */
+.stAppHeader {
+    display: none !important;
+}
+
+/* Hide share, star, and edit buttons */
+button[title="Share"] {
+    display: none !important;
+}
+
+button[title="Star"] {
+    display: none !important;
+}
+
+button[title="Edit"] {
+    display: none !important;
+}
+
+/* Hide toolbar container */
+div[data-testid="stToolbar"] {
+    display: none !important;
+}
+
+/* Hide the entire header area */
+header[data-testid="stHeader"] {
+    display: none !important;
+}
+
+/* Additional specific targeting for toolbar elements */
+.css-18e3th9 {
+    display: none !important;
+}
+
+.css-1d391kg .css-18e3th9 {
+    display: none !important;
+}
 </style>
 """, unsafe_allow_html=True)
 
