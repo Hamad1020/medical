@@ -84,14 +84,15 @@ def main():
                 error_msg = str(e)
                 print(f"Error: {error_msg}")
                 
+                # Show detailed error for debugging
+                st.error(f"Error details: {error_msg}")
+                
                 if "rate limit" in error_msg.lower():
-                    st.error("⚠️ Rate limit exceeded. Please wait a moment and try again.")
+                    st.info("⚠️ Rate limit exceeded. Please wait a moment and try again.")
                 elif "timeout" in error_msg.lower():
-                    st.error("⚠️ Request timed out. Please try again.")
+                    st.info("⚠️ Request timed out. Please try again.")
                 elif "too many requests" in error_msg.lower():
-                    st.error("⚠️ Too many requests. Please wait a moment and try again.")
-                else:
-                    st.error("Some error occurred. Please try again.")
+                    st.info("⚠️ Too many requests. Please wait a moment and try again.")
                 
                 utils.print_qa(main, user_query, f"Error: {error_msg}")
 
